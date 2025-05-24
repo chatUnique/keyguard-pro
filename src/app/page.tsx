@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { SingleKeyDetector } from '@/components/SingleKeyDetector';
 import { BatchKeyDetector } from '@/components/BatchKeyDetector';
 import { CustomUrlTester } from '@/components/CustomUrlTester';
+import { NetworkStatus } from '@/components/NetworkStatus';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { useKeyDetection } from '@/hooks/useKeyDetection';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -535,6 +536,16 @@ export default function Home() {
 
       <main className="flex-1 px-6 py-8">
         <div className="max-w-6xl mx-auto">
+          {/* 网络状态显示 */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <NetworkStatus />
+          </motion.div>
+
           <AnimatePresence mode="wait">
             {currentPage === PageType.SINGLE && (
               <motion.div

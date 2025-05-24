@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Moon, Sun, Shield } from 'lucide-react';
 import { HeaderProps } from '@/types';
 import { KeyGuardLogo } from './KeyGuardLogo';
+import { ProxySettings } from './ProxySettings';
 
 /**
  * 应用头部组件 - 采用苹果官网简洁设计风格
@@ -57,6 +58,9 @@ export const Header: React.FC<HeaderProps> = ({ isDarkMode, toggleDarkMode }) =>
                 本地检测，数据安全
               </span>
             </div>
+
+            {/* 代理设置 */}
+            <ProxySettings />
 
             {/* 深色模式切换 */}
             <motion.button

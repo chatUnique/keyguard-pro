@@ -1,4 +1,5 @@
 import { AiProvider, KeyStatus, ApiKeyValidationResult, RequestFormat, ProviderConfig } from '@/types';
+import { AIProxyClient, smartFetch, createSmartProxyClient } from './proxyFetch';
 
 // AI服务提供商配置
 const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
@@ -882,9 +883,10 @@ export class AIKeyValidator {
 
   private static async validateOpenAI(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
     try {
-      const response = await fetch('https://api.openai.com/v1/models', {
-        headers: getRequestHeaders(AiProvider.OPENAI, format, apiKey),
-      });
+      // 使用智能代理客户端，根据网络状态选择连接方式
+      const proxyClient = createSmartProxyClient();
+      
+      const response = await proxyClient.openai('/v1/models', apiKey);
 
       if (response.status === 401) {
         return {
@@ -912,16 +914,12 @@ export class AIKeyValidator {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      
       // 尝试获取账户信息
       let accountInfo = null;
       try {
-        const usageResponse = await fetch('https://api.openai.com/v1/usage', {
-          headers: getRequestHeaders(AiProvider.OPENAI, format, apiKey),
-        });
+        const usageResponse = await proxyClient.openai('/v1/usage', apiKey);
         if (usageResponse.ok) {
-          accountInfo = await usageResponse.json();
+          accountInfo = usageResponse.data;
         }
       } catch (e) {
         // 忽略账户信息获取失败
@@ -934,13 +932,13 @@ export class AIKeyValidator {
         status: KeyStatus.VALID,
         message: 'API Key验证成功',
         details: {
-          models: data.data?.map((model: any) => model.id) || [],
-          organization: response.headers.get('openai-organization') || undefined,
+          models: response.data?.data?.map((model: any) => model.id) || [],
+          organization: response.headers['openai-organization'] || undefined,
           accountInfo,
           rateLimit: {
-            requests: parseInt(response.headers.get('x-ratelimit-limit-requests') || '0'),
-            tokens: parseInt(response.headers.get('x-ratelimit-limit-tokens') || '0'),
-            resetTime: response.headers.get('x-ratelimit-reset-requests') || '',
+            requests: parseInt(response.headers['x-ratelimit-limit-requests'] || '0'),
+            tokens: parseInt(response.headers['x-ratelimit-limit-tokens'] || '0'),
+            resetTime: response.headers['x-ratelimit-reset-requests'] || '',
           },
         },
       };
@@ -958,14 +956,12 @@ export class AIKeyValidator {
 
   private static async validateAnthropic(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: getRequestHeaders(AiProvider.ANTHROPIC, format, apiKey),
-        body: JSON.stringify({
-          model: 'claude-3-sonnet-20240229',
-          max_tokens: 1,
-          messages: [{ role: 'user', content: 'test' }],
-        }),
+      const proxyClient = createSmartProxyClient();
+      
+      const response = await proxyClient.anthropic('/v1/messages', apiKey, {
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: 1,
+        messages: [{ role: 'user', content: 'test' }],
       });
 
       if (response.status === 401) {
@@ -1014,8 +1010,9 @@ export class AIKeyValidator {
 
   private static async validateGoogle(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`;
-      const response = await fetch(url);
+      const proxyClient = createSmartProxyClient();
+      
+      const response = await proxyClient.google('/v1/models', apiKey);
 
       if (response.status === 403) {
         return {
@@ -1043,7 +1040,6 @@ export class AIKeyValidator {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
       return {
         isValid: true,
         provider: AiProvider.GOOGLE,
@@ -1051,7 +1047,7 @@ export class AIKeyValidator {
         status: KeyStatus.VALID,
         message: 'API Key验证成功',
         details: {
-          models: data.models?.map((model: any) => model.name.split('/').pop()) || [],
+          models: response.data?.models?.map((model: any) => model.name.split('/').pop()) || [],
         },
       };
     } catch (error) {
@@ -1079,14 +1075,14 @@ export class AIKeyValidator {
     }
 
     try {
-      const tokenResponse = await fetch(
-        `https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=${apiKey}&client_secret=${secretKey}`,
-        { method: 'POST' }
-      );
+      const proxyClient = createSmartProxyClient();
       
-      const tokenData = await tokenResponse.json();
+      const response = await proxyClient.request({
+        url: `https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=${apiKey}&client_secret=${secretKey}`,
+        method: 'POST',
+      });
       
-      if (!tokenData.access_token) {
+      if (!response.data?.access_token) {
         return {
           isValid: false,
           provider: AiProvider.BAIDU,
@@ -1105,7 +1101,7 @@ export class AIKeyValidator {
         message: 'API Key验证成功',
         details: {
           models: ['ernie-bot', 'ernie-bot-turbo', 'ernie-bot-4'],
-          accountInfo: { access_token: tokenData.access_token },
+          accountInfo: { access_token: response.data.access_token },
         },
       };
     } catch (error) {
@@ -1466,7 +1462,10 @@ export class AIKeyValidator {
         finalEndpoint = endpoint.replace('{key}', apiKey);
       }
 
-      const response = await fetch(finalEndpoint, {
+      // 使用智能代理客户端，根据网络状态选择连接方式
+      const proxyClient = createSmartProxyClient();
+      const response = await proxyClient.request({
+        url: finalEndpoint,
         headers: getRequestHeaders(provider, format, apiKey),
       });
 
