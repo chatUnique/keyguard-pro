@@ -70,6 +70,7 @@ export enum AiProvider {
   KUNLUN = 'kunlun',
   ALIBABA_CLOUD = 'alibaba_cloud',
   HUAWEI = 'huawei',
+  SILICONFLOW = 'siliconflow',
   // 新增其他服务商
   CLINE = 'cline',
   HUNYUAN = 'hunyuan',

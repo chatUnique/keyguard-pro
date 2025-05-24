@@ -354,6 +354,15 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
       defaultModels: ['pangu-alpha', 'pangu-coder']
     },
     { 
+      value: AiProvider.SILICONFLOW, 
+      label: '硅基流动', 
+      description: 'DeepSeek Chat, Qwen 72B, Llama 3',
+      icon: <ProviderIcon provider={AiProvider.SILICONFLOW} size={16} />,
+      placeholder: 'sk-...',
+      example: 'sk-1234567890abcdef...',
+      defaultModels: ['deepseek-chat', 'qwen-72b-chat', 'llama-3-8b-instruct', 'llama-3-70b-instruct', 'yi-1.5-34b-chat']
+    },
+    { 
       value: AiProvider.OLLAMA, 
       label: 'Ollama', 
       description: '本地部署AI模型平台',

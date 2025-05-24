@@ -39,26 +39,54 @@ export class BatchProcessor {
    * 2. 服务:Key格式：openai:sk-xxx
    * 3. JSON格式：[{"service": "openai", "key": "sk-xxx"}]
    */
-  static parseBatchInput(input: string): BatchKeyItem[] {
+  static parseBatchInput(input: string, enableDeduplication: boolean = true): {
+    items: BatchKeyItem[];
+    duplicatesRemoved: number;
+    totalParsed: number;
+  } {
     const items: BatchKeyItem[] = [];
     const lines = input.trim().split('\n').filter(line => line.trim());
+    let totalParsed = 0;
+    const keySet = new Set<string>(); // 用于去重
+    const duplicateKeys: string[] = []; // 记录重复的keys
 
-    if (!lines.length) return items;
+    if (!lines.length) return { items, duplicatesRemoved: 0, totalParsed: 0 };
 
     // 尝试解析JSON格式
     if (input.trim().startsWith('[')) {
       try {
         const jsonData = JSON.parse(input);
         if (Array.isArray(jsonData)) {
-          return jsonData.map((item, index) => ({
-            id: `batch-${Date.now()}-${index}`,
-            service: this.parseProvider(item.service || item.provider || 'openai'),
-            key: item.key || item.apiKey || '',
-            status: KeyStatus.PENDING,
-            retryCount: 0,
-            createdAt: new Date(),
-            customUrl: item.customUrl,
-          }));
+          jsonData.forEach((item, index) => {
+            const key = item.key || item.apiKey || '';
+            if (key) {
+              totalParsed++;
+              
+              if (enableDeduplication) {
+                if (keySet.has(key)) {
+                  duplicateKeys.push(key);
+                  return; // 跳过重复的key
+                }
+                keySet.add(key);
+              }
+              
+              items.push({
+                id: `batch-${Date.now()}-${index}`,
+                service: this.parseProvider(item.service || item.provider || 'openai'),
+                key,
+                status: KeyStatus.PENDING,
+                retryCount: 0,
+                createdAt: new Date(),
+                customUrl: item.customUrl,
+              });
+            }
+          });
+          
+          return { 
+            items, 
+            duplicatesRemoved: duplicateKeys.length, 
+            totalParsed 
+          };
         }
       } catch (error) {
         console.warn('Failed to parse JSON format, trying line-by-line parsing');
@@ -90,6 +118,16 @@ export class BatchProcessor {
       }
 
       if (key) {
+        totalParsed++;
+        
+        if (enableDeduplication) {
+          if (keySet.has(key)) {
+            duplicateKeys.push(key);
+            return; // 跳过重复的key
+          }
+          keySet.add(key);
+        }
+        
         items.push({
           id: `batch-${Date.now()}-${index}`,
           service,
@@ -102,7 +140,11 @@ export class BatchProcessor {
       }
     });
 
-    return items;
+    return { 
+      items, 
+      duplicatesRemoved: duplicateKeys.length, 
+      totalParsed 
+    };
   }
 
   /**
@@ -129,6 +171,8 @@ export class BatchProcessor {
       'cohere': AiProvider.COHERE,
       'huggingface': AiProvider.HUGGINGFACE,
       'hf': AiProvider.HUGGINGFACE,
+      'siliconflow': AiProvider.SILICONFLOW,
+      'silicon': AiProvider.SILICONFLOW,
       'custom': AiProvider.CUSTOM,
     };
 
@@ -375,7 +419,7 @@ export class BatchProcessor {
     }
 
     try {
-      preview = this.parseBatchInput(input);
+      preview = this.parseBatchInput(input).items;
       
       if (preview.length === 0) {
         errors.push('未能解析出任何有效的API Key');

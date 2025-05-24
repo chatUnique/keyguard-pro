@@ -51,6 +51,11 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
   const [defaultRequestFormat, setDefaultRequestFormat] = useState<RequestFormat>(RequestFormat.NATIVE);
   const [defaultModel, setDefaultModel] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [enableDeduplication, setEnableDeduplication] = useState(true);
+  const [deduplicationInfo, setDeduplicationInfo] = useState<{
+    duplicatesRemoved: number;
+    totalParsed: number;
+  } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<KeyStatus | 'all'>('all');
   
@@ -138,6 +143,7 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
     { value: AiProvider.KUNLUN, label: '昆仑万维', icon: <ProviderIcon provider={AiProvider.KUNLUN} size={16} /> },
     { value: AiProvider.ALIBABA_CLOUD, label: '阿里云百炼', icon: <ProviderIcon provider={AiProvider.ALIBABA_CLOUD} size={16} /> },
     { value: AiProvider.HUAWEI, label: '华为盘古', icon: <ProviderIcon provider={AiProvider.HUAWEI} size={16} /> },
+    { value: AiProvider.SILICONFLOW, label: '硅基流动', icon: <ProviderIcon provider={AiProvider.SILICONFLOW} size={16} /> },
     
     // 新增主流服务商
     { value: AiProvider.OLLAMA, label: 'Ollama', icon: <ProviderIcon provider={AiProvider.OLLAMA} size={16} /> },
@@ -198,6 +204,9 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
   const parseInput = useCallback((text: string): BatchKeyItem[] => {
     const lines = text.trim().split('\n').filter(line => line.trim());
     const items: BatchKeyItem[] = [];
+    let totalParsed = 0;
+    const keySet = new Set<string>(); // 用于去重
+    let duplicatesRemoved = 0;
 
     lines.forEach((line, index) => {
       const trimmedLine = line.trim();
@@ -277,6 +286,8 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
                 'aliyun': AiProvider.ALIBABA_CLOUD,
                 'huawei': AiProvider.HUAWEI,
                 'pangu': AiProvider.HUAWEI,
+                'siliconflow': AiProvider.SILICONFLOW,
+                'silicon': AiProvider.SILICONFLOW,
                 
                 // 新增主流服务商
                 'ollama': AiProvider.OLLAMA,
@@ -361,6 +372,8 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
                 'aliyun': AiProvider.ALIBABA_CLOUD,
                 'huawei': AiProvider.HUAWEI,
                 'pangu': AiProvider.HUAWEI,
+                'siliconflow': AiProvider.SILICONFLOW,
+                'silicon': AiProvider.SILICONFLOW,
                 
                 // 新增主流服务商
                 'ollama': AiProvider.OLLAMA,
@@ -383,6 +396,17 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
         }
 
         if (key) {
+          totalParsed++;
+          
+          // 去重检查
+          if (enableDeduplication) {
+            if (keySet.has(key)) {
+              duplicatesRemoved++;
+              return; // 跳过重复的key
+            }
+            keySet.add(key);
+          }
+          
           items.push({
             id: `${Date.now()}-${index}`,
             service,
@@ -399,8 +423,14 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
       }
     });
 
+    // 更新去重信息
+    setDeduplicationInfo({
+      duplicatesRemoved,
+      totalParsed
+    });
+
     return items;
-  }, [inputFormat, defaultProvider]);
+  }, [inputFormat, defaultProvider, enableDeduplication]);
 
   /**
    * 开始批量检测
@@ -566,6 +596,27 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
             onChange={handleFileUpload}
             className="hidden"
           />
+          
+          {/* 去重信息显示 */}
+          {deduplicationInfo && deduplicationInfo.totalParsed > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
+            >
+              <div className="flex items-center space-x-2 text-sm">
+                <div className="text-blue-600 dark:text-blue-400">
+                  📊 解析了 <span className="font-medium">{deduplicationInfo.totalParsed}</span> 个API Key
+                  {enableDeduplication && deduplicationInfo.duplicatesRemoved > 0 && (
+                    <>
+                      ，自动去重 <span className="font-medium text-orange-600 dark:text-orange-400">{deduplicationInfo.duplicatesRemoved}</span> 个
+                    </>
+                  )}
+                  ，最终 <span className="font-medium text-green-600 dark:text-green-400">{deduplicationInfo.totalParsed - deduplicationInfo.duplicatesRemoved}</span> 个待检测
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* 高级设置 */}
@@ -631,6 +682,24 @@ export const BatchKeyDetector: React.FC<BatchKeyDetectorProps> = ({
                     placeholder="留空使用默认模型"
                     className="w-full h-10 px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   />
+                </div>
+                
+                <div className="md:col-span-3">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="enableDeduplication"
+                      checked={enableDeduplication}
+                      onChange={(e) => setEnableDeduplication(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="enableDeduplication" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      启用自动去重
+                    </label>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      自动移除重复的API Key
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             )}

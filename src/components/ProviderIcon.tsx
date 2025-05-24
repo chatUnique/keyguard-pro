@@ -169,6 +169,10 @@ export const ProviderIcon: React.FC<ProviderIconProps> = ({
 
     case AiProvider.HUAWEI:
       return <GenericIcon color="#FF0000">华</GenericIcon>; 
+      
+    case AiProvider.SILICONFLOW:
+      return <GenericIcon color="#4F46E5">硅</GenericIcon>;
+      
     case AiProvider.OLLAMA:
       return <Ollama size={size} className={className} color="#000" />;
 

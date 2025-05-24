@@ -35,7 +35,8 @@ export async function POST(request: NextRequest) {
       'api.lingyi.ai',
       'api.baichuan-ai.com',
       'api.sensetime.com',
-      'api.yunque.bytedance.com'
+      'api.yunque.bytedance.com',
+      'api.siliconflow.cn'
     ];
 
     const urlObj = new URL(url);

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <!-- 盾牌渐变 -->
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#7C3AED" />
+    </linearGradient>
+    
+    <!-- 钥匙渐变 -->
+    <linearGradient id="keyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 主盾牌 -->
+  <path 
+    d="M50 8 
+       L80 22 
+       L80 45 
+       C80 68, 50 88, 50 88
+       C50 88, 20 68, 20 45
+       L20 22 
+       Z" 
+    fill="url(#shieldGradient)" 
+    stroke="#6366F1" 
+    stroke-width="2"
+  />
+  
+  <!-- 内部盾牌边框 -->
+  <path 
+    d="M50 16
+       L72 26
+       L72 42
+       C72 62, 50 78, 50 78
+       C50 78, 28 62, 28 42
+       L28 26
+       Z" 
+    fill="none" 
+    stroke="#E2E8F0" 
+    stroke-width="1" 
+    opacity="0.3"
+  />
+  
+  <!-- 钥匙 - 外圆 -->
+  <circle 
+    cx="45" 
+    cy="40" 
+    r="8" 
+    fill="none" 
+    stroke="url(#keyGradient)" 
+    stroke-width="3"
+  />
+  
+  <!-- 钥匙 - 内圆 -->
+  <circle 
+    cx="45" 
+    cy="40" 
+    r="4" 
+    fill="none" 
+    stroke="url(#keyGradient)" 
+    stroke-width="1.5"
+  />
+  
+  <!-- 钥匙柄 -->
+  <rect 
+    x="53" 
+    y="38" 
+    width="12" 
+    height="4" 
+    rx="2" 
+    fill="url(#keyGradient)"
+  />
+  
+  <!-- 钥匙齿1 -->
+  <rect 
+    x="62" 
+    y="35" 
+    width="4" 
+    height="3" 
+    rx="1" 
+    fill="url(#keyGradient)"
+  />
+  
+  <!-- 钥匙齿2 -->
+  <rect 
+    x="62" 
+    y="42" 
+    width="6" 
+    height="3" 
+    rx="1" 
+    fill="url(#keyGradient)"
+  />
+</svg> 

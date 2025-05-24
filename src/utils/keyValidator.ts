@@ -667,6 +667,21 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
       },
     },
   },
+  [AiProvider.SILICONFLOW]: {
+    name: '硅基流动',
+    keyFormat: /^sk-[a-zA-Z0-9]{48,}$/,
+    keyExample: 'sk-1234567890abcdef...',
+    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    endpoints: {
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.siliconflow.cn/v1/models',
+    },
+    headers: {
+      [RequestFormat.OPENAI_COMPATIBLE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
+    },
+  },
 };
 
 /**
@@ -860,7 +875,7 @@ export class AIKeyValidator {
         return this.validateGeneric(keyToValidate, provider, format);
       case AiProvider.HUNYUAN:
         return this.validateGeneric(keyToValidate, provider, format);
-      case AiProvider.YUANBAO:
+      case AiProvider.SILICONFLOW:
         return this.validateGeneric(keyToValidate, provider, format);
       case AiProvider.VOLCENGINE:
         return this.validateGeneric(keyToValidate, provider, format);

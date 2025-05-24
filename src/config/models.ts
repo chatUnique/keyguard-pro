@@ -585,6 +585,45 @@ export const githubCopilotModels: ModelInfo[] = [
   }
 ];
 
+// 硅基流动模型
+export const siliconflowModels: ModelInfo[] = [
+  {
+    id: 'deepseek-chat',
+    name: 'DeepSeek Chat',
+    provider: '硅基流动',
+    contextLength: 32768,
+    description: '硅基流动提供的DeepSeek对话模型'
+  },
+  {
+    id: 'qwen-72b-chat',
+    name: 'Qwen 72B Chat',
+    provider: '硅基流动',
+    contextLength: 32768,
+    description: '硅基流动提供的通义千问72B对话模型'
+  },
+  {
+    id: 'llama-3-8b-instruct',
+    name: 'Llama 3 8B Instruct',
+    provider: '硅基流动',
+    contextLength: 8192,
+    description: '硅基流动提供的Llama 3 8B指令模型'
+  },
+  {
+    id: 'llama-3-70b-instruct',
+    name: 'Llama 3 70B Instruct',
+    provider: '硅基流动',
+    contextLength: 8192,
+    description: '硅基流动提供的Llama 3 70B指令模型'
+  },
+  {
+    id: 'yi-1.5-34b-chat',
+    name: 'Yi 1.5 34B Chat',
+    provider: '硅基流动',
+    contextLength: 4096,
+    description: '硅基流动提供的零一万物Yi 1.5 34B对话模型'
+  }
+];
+
 export const getAllModels = (): ModelInfo[] => {
   return [
     ...openaiModels,
@@ -619,7 +658,8 @@ export const getAllModels = (): ModelInfo[] => {
     ...ollamaModels,
     ...metaModels,
     ...cozeModels,
-    ...githubCopilotModels
+    ...githubCopilotModels,
+    ...siliconflowModels
   ];
 };
 
