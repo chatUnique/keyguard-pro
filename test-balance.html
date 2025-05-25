@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>余额查询功能测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f7;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .feature {
+            margin-bottom: 20px;
+            padding: 16px;
+            border: 1px solid #e5e5e7;
+            border-radius: 8px;
+        }
+        .feature h3 {
+            margin: 0 0 8px 0;
+            color: #1d1d1f;
+        }
+        .feature p {
+            margin: 0;
+            color: #6e6e73;
+            font-size: 14px;
+        }
+        .highlight {
+            background: #e8f5e8;
+            border-color: #34c759;
+        }
+        .code {
+            background: #f6f6f6;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 13px;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 API Key 余额查询功能</h1>
+        <p>已成功为单个Key检测组件添加余额查询功能，以下是主要特性：</p>
+        
+        <div class="feature highlight">
+            <h3>✅ 余额查询开关</h3>
+            <p>在高级设置中添加了余额查询开关，用户可以选择是否查询账户余额</p>
+        </div>
+        
+        <div class="feature">
+            <h3>🎯 智能显示</h3>
+            <p>余额信息以突出的绿色卡片形式显示，格式化为美元金额（保留两位小数）</p>
+        </div>
+        
+        <div class="feature">
+            <h3>🔧 技术实现</h3>
+            <p>修改了 AIKeyValidator.validateKey 方法，添加 checkBalance 参数</p>
+            <div class="code">
+validateKey(key, provider, format, checkBalance, secretKey)
+            </div>
+        </div>
+        
+        <div class="feature highlight">
+            <h3>🆕 硅基流动余额查询</h3>
+            <p>新增硅基流动专用验证方法，支持完整的用户信息和多维度余额查询</p>
+            <div class="code">
+API端点: https://api.siliconflow.cn/v1/user/info
+认证方式: Bearer Token
+返回信息: 总余额、可用余额、充值余额、用户详情等
+响应格式: 标准包装格式 {code, message, status, data}
+            </div>
+        </div>
+        
+        <div class="feature">
+            <h3>💰 多维度余额显示</h3>
+            <p>硅基流动支持显示详细的余额分解信息</p>
+            <ul>
+                <li><strong>总余额:</strong> 账户总可用金额</li>
+                <li><strong>可用余额:</strong> 当前可使用金额</li>
+                <li><strong>充值余额:</strong> 充值获得的金额</li>
+                <li><strong>账户状态:</strong> 正常/冻结等状态</li>
+                <li><strong>管理员权限:</strong> 是否具有管理权限</li>
+            </ul>
+        </div>
+        
+        <div class="feature">
+            <h3>🌐 服务商支持</h3>
+            <p>目前主要支持 OpenAI 和硅基流动的余额查询，其他服务商可根据其API文档扩展</p>
+            <ul>
+                <li><strong>OpenAI:</strong> 通过 /v1/dashboard/billing/subscription 端点查询</li>
+                <li><strong>硅基流动:</strong> 通过 /v1/user/info 端点查询用户信息和余额</li>
+                <li><strong>Anthropic:</strong> 预留接口，待官方API支持</li>
+                <li><strong>其他:</strong> 可根据各服务商API文档添加</li>
+            </ul>
+        </div>
+        
+        <div class="feature">
+            <h3>🛡️ 安全考虑</h3>
+            <p>余额查询是可选的，默认关闭，避免不必要的API调用和潜在的权限问题</p>
+        </div>
+        
+        <div class="feature">
+            <h3>📱 用户体验</h3>
+            <p>提供了清晰的UI反馈：</p>
+            <ul>
+                <li>开关状态提示文字</li>
+                <li>余额信息突出显示</li>
+                <li>错误处理和降级</li>
+            </ul>
+        </div>
+        
+        <h2>使用方法</h2>
+        <ol>
+            <li>在单个Key检测页面输入API Key</li>
+            <li>点击"高级设置"展开选项</li>
+            <li>开启"查询账户余额"开关</li>
+            <li>点击"开始检测"</li>
+            <li>在结果中查看余额信息（如果支持）</li>
+        </ol>
+        
+        <div class="feature highlight">
+            <h3>🎉 功能完成</h3>
+            <p>余额查询功能已完全实现，可以展示真实的账户余额信息！</p>
+        </div>
+    </div>
+</body>
+</html> 

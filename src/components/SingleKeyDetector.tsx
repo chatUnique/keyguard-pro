@@ -52,6 +52,7 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
   const [isDetecting, setIsDetecting] = useState(false);
   const [result, setResult] = useState<ApiKeyValidationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [checkBalance, setCheckBalance] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // 服务商配置选项
@@ -512,6 +513,7 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
         apiKey.trim(),
         provider,
         requestFormat,
+        checkBalance,
         provider === AiProvider.CUSTOM ? customUrl.trim() : undefined
       );
 
@@ -538,7 +540,7 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
         setIsDetecting(false);
       }
     }
-  }, [apiKey, provider, customUrl, requestFormat, validateInput, onResult]);
+  }, [apiKey, provider, customUrl, requestFormat, validateInput, onResult, checkBalance]);
 
   /**
    * 取消检测
@@ -558,6 +560,7 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
     setCustomUrl('');
     setTestModel('');
     setRequestFormat(RequestFormat.NATIVE);
+    setCheckBalance(false);
     setResult(null);
     setError(null);
     if (abortControllerRef.current) {
@@ -876,6 +879,40 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
                   className="mt-4 space-y-4"
                 >
                   
+                  {/* 余额查询开关 */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Database className="w-4 h-4 text-gray-400" />
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          查询账户余额
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setCheckBalance(!checkBalance)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                          checkBalance 
+                            ? 'bg-blue-600' 
+                            : 'bg-gray-200 dark:bg-gray-700'
+                        }`}
+                        disabled={isDetecting}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                            checkBalance ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                      {checkBalance 
+                        ? '✓ 将查询API Key的账户余额信息（仅支持部分服务商）'
+                        : '○ 不查询余额信息，仅验证API Key有效性'
+                      }
+                    </p>
+                  </div>
+                  
                   {/* 测试模型输入 */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
@@ -998,9 +1035,9 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
                       )}
                       
                       {result.details?.balance !== undefined && (
-                        <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                          <Database className="w-3 h-3" />
-                          <span>余额: ${result.details.balance}</span>
+                        <div className="flex items-center space-x-2 text-sm font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg border border-green-200 dark:border-green-800">
+                          <Database className="w-4 h-4" />
+                          <span>账户余额: ${typeof result.details.balance === 'number' ? result.details.balance.toFixed(2) : result.details.balance}</span>
                         </div>
                       )}
                       
@@ -1015,6 +1052,44 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
                         <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                           <Globe className="w-3 h-3" />
                           <span>组织: {result.details.organization}</span>
+                        </div>
+                      )}
+                      
+                      {/* 硅基流动账户信息 */}
+                      {result.provider === AiProvider.SILICONFLOW && result.details?.accountInfo && (
+                        <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Globe className="w-4 h-4 text-blue-500" />
+                            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">硅基流动账户信息</span>
+                          </div>
+                          <div className="space-y-1 text-xs text-blue-600 dark:text-blue-400">
+                            {result.details.accountInfo.userId && (
+                              <div>用户ID: {result.details.accountInfo.userId}</div>
+                            )}
+                            {result.details.accountInfo.username && (
+                              <div>用户名: {result.details.accountInfo.username}</div>
+                            )}
+                            {result.details.accountInfo.email && (
+                              <div>邮箱: {result.details.accountInfo.email}</div>
+                            )}
+                            {result.details.accountInfo.role && (
+                              <div>角色: {result.details.accountInfo.role}</div>
+                            )}
+                            {result.details.accountInfo.status && (
+                              <div>状态: {result.details.accountInfo.status}</div>
+                            )}
+                            {result.details.accountInfo.isAdmin !== undefined && (
+                              <div>管理员: {result.details.accountInfo.isAdmin ? '是' : '否'}</div>
+                            )}
+                            {result.details.accountInfo.balanceDetails && (
+                              <div className="mt-2 pt-2 border-t border-blue-200 dark:border-blue-700">
+                                <div className="text-xs font-medium text-blue-700 dark:text-blue-300 mb-1">余额明细:</div>
+                                <div>总余额: ¥{result.details.accountInfo.balanceDetails.totalBalance}</div>
+                                <div>可用余额: ¥{result.details.accountInfo.balanceDetails.balance}</div>
+                                <div>充值余额: ¥{result.details.accountInfo.balanceDetails.chargeBalance}</div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>

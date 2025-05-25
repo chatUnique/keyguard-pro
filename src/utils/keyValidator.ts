@@ -748,6 +748,7 @@ export class AIKeyValidator {
     key: string, 
     provider: AiProvider, 
     format: RequestFormat = RequestFormat.NATIVE,
+    checkBalance: boolean = false,
     secretKey?: string
   ): Promise<ApiKeyValidationResult> {
     
@@ -792,97 +793,97 @@ export class AIKeyValidator {
     // 根据提供商进行实际验证
     switch (provider) {
       case AiProvider.OPENAI:
-        return this.validateOpenAI(keyToValidate, format);
+        return this.validateOpenAI(keyToValidate, format, checkBalance);
       case AiProvider.ANTHROPIC:
-        return this.validateAnthropic(keyToValidate, format);
+        return this.validateAnthropic(keyToValidate, format, checkBalance);
       case AiProvider.GOOGLE:
-        return this.validateGoogle(keyToValidate, format);
+        return this.validateGoogle(keyToValidate, format, checkBalance);
       case AiProvider.BAIDU:
-        return this.validateBaidu(keyToValidate, format, secretKey);
+        return this.validateBaidu(keyToValidate, format, checkBalance, secretKey);
       case AiProvider.QWEN:
-        return this.validateQwen(keyToValidate, format);
+        return this.validateQwen(keyToValidate, format, checkBalance);
       case AiProvider.DOUBAO:
-        return this.validateDoubao(keyToValidate, format);
+        return this.validateDoubao(keyToValidate, format, checkBalance);
       case AiProvider.MOONSHOT:
-        return this.validateMoonshot(keyToValidate, format);
+        return this.validateMoonshot(keyToValidate, format, checkBalance);
       case AiProvider.ZHIPU:
-        return this.validateZhipu(keyToValidate, format);
+        return this.validateZhipu(keyToValidate, format, checkBalance);
       case AiProvider.MINIMAX:
-        return this.validateMinimax(keyToValidate, format);
+        return this.validateMinimax(keyToValidate, format, checkBalance);
       case AiProvider.AZURE:
-        return this.validateAzure(keyToValidate, format);
+        return this.validateAzure(keyToValidate, format, checkBalance);
       case AiProvider.COHERE:
-        return this.validateCohere(keyToValidate, format);
+        return this.validateCohere(keyToValidate, format, checkBalance);
       case AiProvider.HUGGINGFACE:
-        return this.validateHuggingFace(keyToValidate, format);
+        return this.validateHuggingFace(keyToValidate, format, checkBalance);
       
       // 新增国际服务商
       case AiProvider.REPLICATE:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.TOGETHER:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.FIREWORKS:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.GROQ:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.PERPLEXITY:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.XAI:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.MISTRAL:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.STABILITY:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.RUNWAY:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       
       // 新增主流服务商
       case AiProvider.OLLAMA:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.META:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.COZE:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.GITHUB_COPILOT:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       
       // 新增国内服务商
       case AiProvider.DEEPSEEK:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.ONEAI:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.TENCENT:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.IFLYTEK:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.SENSETIME:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.BYTEDANCE:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.LINGYI:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.BAICHUAN:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.KUNLUN:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.ALIBABA_CLOUD:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.HUAWEI:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       
       // 新增其他服务商
       case AiProvider.CLINE:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.HUNYUAN:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.SILICONFLOW:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateSiliconFlow(keyToValidate, format, checkBalance);
       case AiProvider.VOLCENGINE:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.MIDJOURNEY:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.CUSTOM:
-        return this.validateGeneric(keyToValidate, provider, format);
+        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       
       default:
         return {
@@ -896,7 +897,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateOpenAI(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateOpenAI(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       // 使用智能代理客户端，根据网络状态选择连接方式
       const proxyClient = createSmartProxyClient();
@@ -931,7 +932,17 @@ export class AIKeyValidator {
 
       // 尝试获取账户信息
       let accountInfo = null;
+      let balance: number | undefined = undefined;
       try {
+        if (checkBalance) {
+          // 查询余额信息
+          const billingResponse = await proxyClient.openai('/v1/dashboard/billing/subscription', apiKey);
+          if (billingResponse.ok) {
+            const billingData = billingResponse.data;
+            balance = billingData.hard_limit_usd || billingData.system_hard_limit_usd || null;
+          }
+        }
+        
         const usageResponse = await proxyClient.openai('/v1/usage', apiKey);
         if (usageResponse.ok) {
           accountInfo = usageResponse.data;
@@ -950,6 +961,7 @@ export class AIKeyValidator {
           models: response.data?.data?.map((model: any) => model.id) || [],
           organization: response.headers['openai-organization'] || undefined,
           accountInfo,
+          balance,
           rateLimit: {
             requests: parseInt(response.headers['x-ratelimit-limit-requests'] || '0'),
             tokens: parseInt(response.headers['x-ratelimit-limit-tokens'] || '0'),
@@ -969,7 +981,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateAnthropic(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateAnthropic(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const proxyClient = createSmartProxyClient();
       
@@ -1001,6 +1013,21 @@ export class AIKeyValidator {
         };
       }
 
+      // 尝试获取账户信息和余额
+      let balance: number | undefined = undefined;
+      if (checkBalance) {
+        try {
+          // Anthropic 没有公开的余额查询API，这里只是示例
+          // 实际使用时可能需要通过其他方式获取
+          const billingResponse = await proxyClient.anthropic('/v1/billing', apiKey);
+          if (billingResponse.ok) {
+            balance = billingResponse.data?.balance || null;
+          }
+        } catch (e) {
+          // 忽略余额查询失败
+        }
+      }
+
       return {
         isValid: true,
         provider: AiProvider.ANTHROPIC,
@@ -1009,6 +1036,7 @@ export class AIKeyValidator {
         message: 'API Key验证成功',
         details: {
           models: ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'],
+          balance,
         },
       };
     } catch (error) {
@@ -1023,7 +1051,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateGoogle(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateGoogle(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const proxyClient = createSmartProxyClient();
       
@@ -1077,7 +1105,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateBaidu(apiKey: string, format: RequestFormat, secretKey?: string): Promise<ApiKeyValidationResult> {
+  private static async validateBaidu(apiKey: string, format: RequestFormat, checkBalance: boolean, secretKey?: string): Promise<ApiKeyValidationResult> {
     if (!secretKey) {
       return {
         isValid: false,
@@ -1131,7 +1159,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateQwen(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateQwen(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const endpoint = format === RequestFormat.NATIVE 
         ? 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation'
@@ -1196,7 +1224,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateDoubao(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateDoubao(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const endpoint = format === RequestFormat.NATIVE 
         ? 'https://ark.cn-beijing.volces.com/api/v3/models'
@@ -1251,7 +1279,7 @@ export class AIKeyValidator {
   }
 
   // 为其他提供商添加类似的验证方法...
-  private static async validateMoonshot(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateMoonshot(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const response = await fetch('https://api.moonshot.cn/v1/models', {
         headers: getRequestHeaders(AiProvider.MOONSHOT, format, apiKey),
@@ -1290,7 +1318,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateZhipu(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateZhipu(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const endpoint = format === RequestFormat.NATIVE 
         ? 'https://open.bigmodel.cn/api/paas/v4/models'
@@ -1333,7 +1361,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateMinimax(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateMinimax(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     // MiniMax 验证逻辑（简化版本，仅格式验证）
     return {
       isValid: true,
@@ -1347,7 +1375,7 @@ export class AIKeyValidator {
     };
   }
 
-  private static async validateAzure(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateAzure(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     // Azure OpenAI 需要具体端点，这里只进行格式验证
     return {
       isValid: true,
@@ -1361,7 +1389,7 @@ export class AIKeyValidator {
     };
   }
 
-  private static async validateCohere(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateCohere(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const endpoint = format === RequestFormat.NATIVE 
         ? 'https://api.cohere.ai/v1/models'
@@ -1401,7 +1429,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateHuggingFace(apiKey: string, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateHuggingFace(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const response = await fetch('https://huggingface.co/api/whoami', {
         headers: getRequestHeaders(AiProvider.HUGGINGFACE, format, apiKey),
@@ -1445,7 +1473,7 @@ export class AIKeyValidator {
     }
   }
 
-  private static async validateGeneric(apiKey: string, provider: AiProvider, format: RequestFormat): Promise<ApiKeyValidationResult> {
+  private static async validateGeneric(apiKey: string, provider: AiProvider, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       const config = PROVIDER_CONFIGS[provider];
       if (!config) {
@@ -1527,6 +1555,118 @@ export class AIKeyValidator {
       };
     }
   }
+
+  private static async validateSiliconFlow(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
+    try {
+      // 首先验证模型端点
+      const response = await fetch('https://api.siliconflow.cn/v1/models', {
+        headers: getRequestHeaders(AiProvider.SILICONFLOW, format, apiKey),
+      });
+
+      if (response.status === 401) {
+        return {
+          isValid: false,
+          provider: AiProvider.SILICONFLOW,
+          requestFormat: format,
+          status: KeyStatus.INVALID,
+          message: '无效的API Key',
+          error: 'API Key authentication failed',
+        };
+      }
+
+      if (response.status === 429) {
+        return {
+          isValid: false,
+          provider: AiProvider.SILICONFLOW,
+          requestFormat: format,
+          status: KeyStatus.RATE_LIMITED,
+          message: 'API Key已达到速率限制',
+          error: 'Rate limit exceeded',
+        };
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // 获取模型列表
+      const modelsData = await response.json();
+      const models = modelsData?.data?.map((model: any) => model.id) || 
+                   ['deepseek-chat', 'qwen-72b-chat', 'llama-3-8b-instruct', 'llama-3-70b-instruct', 'yi-1.5-34b-chat'];
+
+      // 查询用户信息和余额
+      let userInfo = null;
+      let balance: number | undefined = undefined;
+      
+      if (checkBalance) {
+        try {
+          const userInfoResponse = await fetch('https://api.siliconflow.cn/v1/user/info', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            }
+          });
+          
+          if (userInfoResponse.ok) {
+            const responseData = await userInfoResponse.json();
+            
+            // 检查响应状态
+            if (responseData.code === 20000 && responseData.status === true && responseData.data) {
+              userInfo = responseData.data;
+              
+              // 从用户信息中提取余额，硅基流动有多个余额字段
+              const balanceValue = userInfo.totalBalance || userInfo.balance || userInfo.chargeBalance;
+              if (balanceValue) {
+                // 转换字符串余额为数字
+                balance = parseFloat(balanceValue);
+              }
+            }
+          }
+        } catch (e) {
+          // 忽略用户信息获取失败，不影响主要验证
+          console.warn('Failed to fetch SiliconFlow user info:', e);
+        }
+      }
+
+      return {
+        isValid: true,
+        provider: AiProvider.SILICONFLOW,
+        requestFormat: format,
+        status: KeyStatus.VALID,
+        message: 'API Key验证成功',
+        details: {
+          models,
+          balance,
+          accountInfo: userInfo ? {
+            userId: userInfo.id,
+            username: userInfo.name,
+            email: userInfo.email,
+            isAdmin: userInfo.isAdmin,
+            status: userInfo.status,
+            role: userInfo.role,
+            introduction: userInfo.introduction,
+            avatar: userInfo.image,
+            balanceDetails: {
+              balance: userInfo.balance,
+              chargeBalance: userInfo.chargeBalance,
+              totalBalance: userInfo.totalBalance,
+            },
+            rawUserInfo: userInfo, // 保留原始用户信息以供调试
+          } : undefined,
+        },
+      };
+    } catch (error) {
+      return {
+        isValid: false,
+        provider: AiProvider.SILICONFLOW,
+        requestFormat: format,
+        status: KeyStatus.UNKNOWN,
+        message: '验证过程中出现错误',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
 }
 
 /**
@@ -1538,5 +1678,5 @@ export async function validateApiKey(
   format: RequestFormat = RequestFormat.NATIVE,
   secretKey?: string
 ): Promise<ApiKeyValidationResult> {
-  return AIKeyValidator.validateKey(apiKey, provider, format, secretKey);
+  return AIKeyValidator.validateKey(apiKey, provider, format, false, secretKey);
 } 
