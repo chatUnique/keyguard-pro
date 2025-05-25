@@ -21,6 +21,7 @@ interface ProxyResponse {
 
 /**
  * 检测是否需要使用代理（考虑用户设置和地理位置）
+ * @returns 是否需要使用代理
  */
 export function shouldUseProxy(): boolean {
   // 首先检查用户的手动设置
@@ -57,6 +58,8 @@ export function shouldUseProxy(): boolean {
 /**
  * 智能代理请求函数
  * 自动检测网络环境，决定是否使用代理
+ * @param options - 请求选项
+ * @returns 代理响应
  */
 export async function smartFetch(options: ProxyRequestOptions): Promise<ProxyResponse> {
   const {
@@ -79,6 +82,8 @@ export async function smartFetch(options: ProxyRequestOptions): Promise<ProxyRes
 
 /**
  * 通过代理服务器请求
+ * @param options - 请求选项
+ * @returns 代理响应
  */
 export async function proxyFetch(options: ProxyRequestOptions): Promise<ProxyResponse> {
   const {
@@ -113,6 +118,8 @@ export async function proxyFetch(options: ProxyRequestOptions): Promise<ProxyRes
 
 /**
  * 直接请求（无代理）
+ * @param options - 请求选项
+ * @returns 直接响应
  */
 export async function directFetch(options: ProxyRequestOptions): Promise<ProxyResponse> {
   const {
@@ -175,6 +182,11 @@ export async function directFetch(options: ProxyRequestOptions): Promise<ProxyRe
 export class AIProxyClient {
   private useProxy: boolean;
 
+  /**
+   * 构造函数
+   * @param forceProxy - 是否强制使用代理
+   * @param networkStatus - 网络状态信息
+   */
   constructor(forceProxy?: boolean, networkStatus?: { direct: boolean; proxy: boolean; recommended: 'direct' | 'proxy' }) {
     if (networkStatus) {
       // 根据网络检测结果决定连接方式
@@ -197,14 +209,18 @@ export class AIProxyClient {
   }
 
   /**
-   * 创建基于网络状态的客户端
+   * 从网络状态创建客户端
+   * @param networkStatus - 网络状态信息
+   * @returns AI代理客户端实例
    */
   static fromNetworkStatus(networkStatus: { direct: boolean; proxy: boolean; recommended: 'direct' | 'proxy' }): AIProxyClient {
     return new AIProxyClient(undefined, networkStatus);
   }
 
   /**
-   * 通用AI API请求
+   * 发送请求
+   * @param options - 请求选项
+   * @returns 请求响应
    */
   async request(options: ProxyRequestOptions): Promise<ProxyResponse> {
     return smartFetch({
@@ -215,6 +231,10 @@ export class AIProxyClient {
 
   /**
    * OpenAI API请求
+   * @param endpoint - API端点
+   * @param apiKey - API密钥
+   * @param data - 请求数据
+   * @returns 请求响应
    */
   async openai(endpoint: string, apiKey: string, data?: any): Promise<ProxyResponse> {
     return this.request({
@@ -230,6 +250,10 @@ export class AIProxyClient {
 
   /**
    * Anthropic API请求
+   * @param endpoint - API端点
+   * @param apiKey - API密钥
+   * @param data - 请求数据
+   * @returns 请求响应
    */
   async anthropic(endpoint: string, apiKey: string, data?: any): Promise<ProxyResponse> {
     return this.request({
@@ -245,7 +269,11 @@ export class AIProxyClient {
   }
 
   /**
-   * Google AI API请求
+   * Google API请求
+   * @param endpoint - API端点
+   * @param apiKey - API密钥
+   * @param data - 请求数据
+   * @returns 请求响应
    */
   async google(endpoint: string, apiKey: string, data?: any): Promise<ProxyResponse> {
     const url = endpoint.includes('?') 
@@ -263,7 +291,9 @@ export class AIProxyClient {
   }
 
   /**
-   * 快速检测网络连通性（优化版）
+   * 测试网络连接性
+   * @param forceRefresh - 是否强制刷新
+   * @returns 网络状态信息
    */
   async testConnectivity(forceRefresh: boolean = false): Promise<{
     direct: boolean;
@@ -402,7 +432,8 @@ export class AIProxyClient {
   }
 
   /**
-   * 快速预检测（使用HEAD请求进行轻量检测）
+   * 快速预检查
+   * @returns 网络状态信息
    */
   private async quickPreCheck(): Promise<{ direct: boolean; proxy: boolean }> {
     // 使用HEAD请求，更轻量
@@ -450,6 +481,7 @@ export class AIProxyClient {
 
 /**
  * 获取当前网络状态
+ * @returns 网络状态信息
  */
 export function getCurrentNetworkStatus() {
   if (typeof window !== 'undefined' && window.networkStatus) {
@@ -459,7 +491,8 @@ export function getCurrentNetworkStatus() {
 }
 
 /**
- * 创建智能代理客户端，自动根据网络状态选择连接方式
+ * 创建智能代理客户端
+ * @returns AI代理客户端实例
  */
 export function createSmartProxyClient(): AIProxyClient {
   // 首先检查用户的强制代理设置

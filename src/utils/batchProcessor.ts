@@ -149,6 +149,8 @@ export class BatchProcessor {
 
   /**
    * 解析服务提供商名称
+   * @param input - 服务提供商名称
+   * @returns 标准化的服务提供商枚举值
    */
   private static parseProvider(input: string): AiProvider {
     const providerMap: Record<string, AiProvider> = {
@@ -181,6 +183,10 @@ export class BatchProcessor {
 
   /**
    * 开始批量处理
+   * @param items - 要处理的密钥项列表
+   * @param onProgress - 进度回调函数
+   * @param onComplete - 完成回调函数
+   * @param config - 处理配置
    */
   static async processBatch(
     items: BatchKeyItem[],
@@ -216,7 +222,8 @@ export class BatchProcessor {
   }
 
   /**
-   * 处理队列
+   * 处理队列中的项目
+   * @param config - 处理配置
    */
   private static async processQueue(config: BatchProcessorConfig): Promise<void> {
     const semaphore = new Semaphore(config.concurrency);
@@ -243,6 +250,8 @@ export class BatchProcessor {
 
   /**
    * 处理单个项目
+   * @param item - 要处理的密钥项
+   * @param config - 处理配置
    */
   private static async processItem(item: BatchKeyItem, config: BatchProcessorConfig): Promise<void> {
     while (item.retryCount <= config.maxRetries) {
@@ -318,7 +327,7 @@ export class BatchProcessor {
   }
 
   /**
-   * 更新进度
+   * 更新处理进度
    */
   private static updateProgress(): void {
     if (!this.onProgressCallback) return;
@@ -328,7 +337,8 @@ export class BatchProcessor {
   }
 
   /**
-   * 计算统计信息
+   * 计算处理统计信息
+   * @returns 统计信息对象
    */
   private static calculateStatistics(): BatchStatistics {
     const total = this.queue.length;
@@ -365,7 +375,7 @@ export class BatchProcessor {
   }
 
   /**
-   * 继续处理
+   * 恢复处理
    */
   static resumeProcessing(): void {
     this.isPaused = false;
@@ -385,6 +395,7 @@ export class BatchProcessor {
 
   /**
    * 获取处理状态
+   * @returns 处理状态信息
    */
   static getProcessingStatus(): {
     isProcessing: boolean;
@@ -403,7 +414,9 @@ export class BatchProcessor {
   }
 
   /**
-   * 验证批量输入格式
+   * 验证批量输入
+   * @param input - 输入文本
+   * @returns 验证结果
    */
   static validateBatchInput(input: string): {
     isValid: boolean;
@@ -450,14 +463,16 @@ export class BatchProcessor {
   }
 
   /**
-   * 工具方法：延迟
+   * 延时函数
+   * @param ms - 延时毫秒数
    */
   private static sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
-   * 工具方法：超时Promise
+   * 超时Promise
+   * @param ms - 超时毫秒数
    */
   private static timeoutPromise<T>(ms: number): Promise<T> {
     return new Promise((_, reject) => {
@@ -467,16 +482,24 @@ export class BatchProcessor {
 }
 
 /**
- * 信号量类 - 控制并发数
+ * 信号量类 - 用于控制并发
  */
 class Semaphore {
   private permits: number;
   private queue: (() => void)[] = [];
 
+  /**
+   * 构造函数
+   * @param permits - 允许的并发数
+   */
   constructor(permits: number) {
     this.permits = permits;
   }
 
+  /**
+   * 获取许可
+   * @returns 释放许可的函数
+   */
   async acquire(): Promise<() => void> {
     return new Promise<() => void>((resolve) => {
       if (this.permits > 0) {
@@ -491,6 +514,9 @@ class Semaphore {
     });
   }
 
+  /**
+   * 释放许可
+   */
   private release(): void {
     this.permits++;
     if (this.queue.length > 0) {

@@ -820,7 +820,7 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
                   setError(null);
                   setResult(null);
                 }}
-                placeholder={currentProvider?.placeholder || 'Enter your API key'}
+                placeholder={currentProvider?.placeholder || '输入您的API Key'}
                 className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                 disabled={isDetecting}
               />

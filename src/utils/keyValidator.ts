@@ -1,7 +1,10 @@
 import { AiProvider, KeyStatus, ApiKeyValidationResult, RequestFormat, ProviderConfig } from '@/types';
 import { AIProxyClient, smartFetch, createSmartProxyClient } from './proxyFetch';
 
-// AI服务提供商配置
+/**
+ * AI服务提供商配置
+ * 包含每个服务商的API端点、请求头、密钥格式等信息
+ */
 const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
   [AiProvider.OPENAI]: {
     name: 'OpenAI',
@@ -685,65 +688,94 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
 };
 
 /**
- * 验证API Key格式是否正确
+ * 验证API密钥格式
+ * @param apiKey - 要验证的API密钥
+ * @param provider - AI服务提供商
+ * @returns 密钥格式是否有效
  */
 export function validateKeyFormat(apiKey: string, provider: AiProvider): boolean {
   const config = PROVIDER_CONFIGS[provider];
-  return config ? config.keyFormat.test(apiKey) : false;
+  return config?.keyFormat?.test(apiKey) ?? false;
 }
 
 /**
- * 获取AI服务提供商的显示名称
+ * 获取服务商显示名称
+ * @param provider - AI服务提供商
+ * @returns 服务商的显示名称
  */
 export function getProviderDisplayName(provider: AiProvider): string {
-  return PROVIDER_CONFIGS[provider]?.name || provider;
+  return PROVIDER_CONFIGS[provider]?.name ?? provider;
 }
 
 /**
- * 获取API Key示例格式
+ * 获取密钥示例
+ * @param provider - AI服务提供商
+ * @returns 该服务商的密钥示例
  */
 export function getKeyExample(provider: AiProvider): string {
-  return PROVIDER_CONFIGS[provider]?.keyExample || 'your-api-key-here';
+  return PROVIDER_CONFIGS[provider]?.keyExample ?? '';
 }
 
 /**
  * 获取支持的请求格式
+ * @param provider - AI服务提供商
+ * @returns 该服务商支持的请求格式列表
  */
 export function getSupportedFormats(provider: AiProvider): RequestFormat[] {
-  return PROVIDER_CONFIGS[provider]?.supportedFormats || [RequestFormat.NATIVE];
+  return PROVIDER_CONFIGS[provider]?.supportedFormats ?? [];
 }
 
 /**
- * 检查是否需要Secret Key
+ * 检查是否需要密钥
+ * @param provider - AI服务提供商
+ * @returns 是否需要密钥
  */
 export function needsSecretKey(provider: AiProvider): boolean {
-  return PROVIDER_CONFIGS[provider]?.needsSecretKey || false;
+  return PROVIDER_CONFIGS[provider]?.needsSecretKey ?? false;
 }
 
 /**
- * 获取请求头，替换占位符
+ * 获取请求头
+ * @param provider - AI服务提供商
+ * @param format - 请求格式
+ * @param apiKey - API密钥
+ * @returns 请求头对象
  */
 function getRequestHeaders(provider: AiProvider, format: RequestFormat, apiKey: string): Record<string, string> {
   const config = PROVIDER_CONFIGS[provider];
-  const headers = config?.headers[format] || {};
-  const result: Record<string, string> = {};
-  
-  for (const [key, value] of Object.entries(headers)) {
-    result[key] = value.replace('{key}', apiKey);
-  }
-  
-  return result;
+  if (!config?.headers?.[format]) return {};
+
+  const headers = { ...config.headers[format] };
+  Object.keys(headers).forEach(key => {
+    headers[key] = headers[key].replace('{key}', apiKey);
+  });
+  return headers;
 }
 
 /**
- * AI Key验证工具类
+ * AI密钥验证器类
+ * 提供验证各种AI服务商API密钥的功能
  */
 export class AIKeyValidator {
-  
+  /**
+   * 验证密钥格式
+   * @param key - 要验证的API密钥
+   * @param provider - AI服务提供商
+   * @returns 密钥格式是否有效
+   */
   static validateKeyFormat(key: string, provider: AiProvider): boolean {
     return validateKeyFormat(key, provider);
   }
 
+  /**
+   * 验证API密钥
+   * @param key - 要验证的API密钥
+   * @param provider - AI服务提供商
+   * @param format - 请求格式
+   * @param checkBalance - 是否检查余额
+   * @param secretKey - 密钥（如果需要）
+   * @returns 验证结果
+   */
   static async validateKey(
     key: string, 
     provider: AiProvider, 
@@ -751,7 +783,6 @@ export class AIKeyValidator {
     checkBalance: boolean = false,
     secretKey?: string
   ): Promise<ApiKeyValidationResult> {
-    
     // 清空内存中的key引用（安全措施）
     const keyToValidate = key;
     key = '';
@@ -897,6 +928,13 @@ export class AIKeyValidator {
     }
   }
 
+  /**
+   * 验证OpenAI API密钥
+   * @param apiKey - API密钥
+   * @param format - 请求格式
+   * @param checkBalance - 是否检查余额
+   * @returns 验证结果
+   */
   private static async validateOpenAI(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
     try {
       // 使用智能代理客户端，根据网络状态选择连接方式
@@ -1670,7 +1708,12 @@ export class AIKeyValidator {
 }
 
 /**
- * 主验证函数
+ * 验证API密钥的便捷函数
+ * @param apiKey - 要验证的API密钥
+ * @param provider - AI服务提供商
+ * @param format - 请求格式
+ * @param secretKey - 密钥（如果需要）
+ * @returns 验证结果
  */
 export async function validateApiKey(
   apiKey: string, 

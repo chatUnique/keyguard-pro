@@ -1,4 +1,8 @@
-// API Key相关类型
+/**
+ * API密钥相关类型定义
+ */
+
+// API密钥验证请求接口
 export interface ApiKeyValidationRequest {
   apiKey: string;
   provider: AiProvider;
@@ -6,6 +10,7 @@ export interface ApiKeyValidationRequest {
   secretKey?: string; // 用于百度等需要secret的服务
 }
 
+// API密钥验证结果接口
 export interface ApiKeyValidationResult {
   isValid: boolean;
   provider: AiProvider;
@@ -28,7 +33,7 @@ export interface ApiKeyValidationResult {
   error?: string;
 }
 
-// AI服务提供商枚举（扩展）
+// AI服务提供商枚举
 export enum AiProvider {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
@@ -43,7 +48,7 @@ export enum AiProvider {
   ZHIPU = 'zhipu',
   MINIMAX = 'minimax',
   CUSTOM = 'custom',
-  // 新增国际服务商
+  // 国际服务商
   REPLICATE = 'replicate',
   TOGETHER = 'together',
   FIREWORKS = 'fireworks',
@@ -53,12 +58,12 @@ export enum AiProvider {
   MISTRAL = 'mistral',
   STABILITY = 'stability',
   RUNWAY = 'runway',
-  // 新增主流服务商
+  // 主流服务商
   OLLAMA = 'ollama',
   META = 'meta',
   COZE = 'coze',
   GITHUB_COPILOT = 'github_copilot',
-  // 新增国内服务商
+  // 国内服务商
   DEEPSEEK = 'deepseek',
   ONEAI = '01ai',
   TENCENT = 'tencent',
@@ -71,7 +76,7 @@ export enum AiProvider {
   ALIBABA_CLOUD = 'alibaba_cloud',
   HUAWEI = 'huawei',
   SILICONFLOW = 'siliconflow',
-  // 新增其他服务商
+  // 其他服务商
   CLINE = 'cline',
   HUNYUAN = 'hunyuan',
   YUANBAO = 'yuanbao',
@@ -85,18 +90,18 @@ export enum RequestFormat {
   OPENAI_COMPATIBLE = 'openai-compatible', // OpenAI兼容格式
 }
 
-// API Key状态枚举
+// API密钥状态枚举
 export enum KeyStatus {
-  PENDING = 'pending',
-  CHECKING = 'checking',
-  VALID = 'valid',
-  INVALID = 'invalid',
-  EXPIRED = 'expired',
-  QUOTA_EXCEEDED = 'quota_exceeded',
-  RATE_LIMITED = 'rate_limited',
-  FORMAT_ERROR = 'format_error',
-  ERROR = 'error',
-  UNKNOWN = 'unknown',
+  PENDING = 'pending',      // 待检测
+  CHECKING = 'checking',    // 检测中
+  VALID = 'valid',         // 有效
+  INVALID = 'invalid',     // 无效
+  EXPIRED = 'expired',     // 已过期
+  QUOTA_EXCEEDED = 'quota_exceeded', // 配额超限
+  RATE_LIMITED = 'rate_limited',    // 频率限制
+  FORMAT_ERROR = 'format_error',    // 格式错误
+  ERROR = 'error',         // 错误
+  UNKNOWN = 'unknown',     // 未知
 }
 
 // 批量检测相关类型
@@ -112,22 +117,24 @@ export interface BatchKeyItem {
   customUrl?: string;
 }
 
+// 批量检测统计信息
 export interface BatchStatistics {
-  total: number;
-  completed: number;
-  valid: number;
-  invalid: number;
-  errors: number;
-  progress: number;
-  averageResponseTime: number;
-  successRate: number;
+  total: number;           // 总数
+  completed: number;       // 已完成
+  valid: number;          // 有效数
+  invalid: number;        // 无效数
+  errors: number;         // 错误数
+  progress: number;       // 进度
+  averageResponseTime: number; // 平均响应时间
+  successRate: number;    // 成功率
 }
 
+// 批量处理器配置
 export interface BatchProcessorConfig {
-  concurrency: number;
-  maxRetries: number;
-  retryDelay: number;
-  timeout: number;
+  concurrency: number;    // 并发数
+  maxRetries: number;     // 最大重试次数
+  retryDelay: number;     // 重试延迟
+  timeout: number;        // 超时时间
 }
 
 // 自定义请求相关类型
@@ -140,6 +147,7 @@ export interface CustomRequest {
   variables: Record<string, string>;
 }
 
+// 自定义响应类型
 export interface CustomResponse {
   status: number;
   statusText: string;
@@ -149,6 +157,7 @@ export interface CustomResponse {
   error?: string;
 }
 
+// 模板类型
 export interface Template {
   id: string;
   name: string;
@@ -159,6 +168,7 @@ export interface Template {
   updatedAt: Date;
 }
 
+// HTTP方法枚举
 export enum HttpMethod {
   GET = 'GET',
   POST = 'POST',
@@ -167,6 +177,7 @@ export enum HttpMethod {
   PATCH = 'PATCH',
 }
 
+// 模板类别枚举
 export enum TemplateCategory {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
@@ -183,6 +194,7 @@ export interface ExportConfig {
   filename?: string;
 }
 
+// 导出格式枚举
 export enum ExportFormat {
   JSON = 'json',
   CSV = 'csv',
@@ -199,36 +211,42 @@ export interface TabNavigationProps {
   onTabChange: (tab: DetectionTab) => void;
 }
 
+// 单个密钥检测器Props
 export interface SingleKeyDetectorProps {
   onResult: (result: ApiKeyValidationResult) => void;
 }
 
+// 批量密钥检测器Props
 export interface BatchKeyDetectorProps {
   onBatchComplete: (results: BatchKeyItem[]) => void;
   onProgress: (progress: BatchStatistics) => void;
 }
 
+// 自定义URL测试器Props
 export interface CustomUrlTesterProps {
   onResult: (response: CustomResponse) => void;
 }
 
+// 结果表格Props
 export interface ResultTableProps {
   results: BatchKeyItem[];
   onExport: (config: ExportConfig) => void;
   onClear: () => void;
 }
 
+// 统计面板Props
 export interface StatisticsPanelProps {
   statistics: BatchStatistics;
 }
 
+// 检测标签页枚举
 export enum DetectionTab {
-  SINGLE = 'single',
-  BATCH = 'batch',
-  CUSTOM = 'custom',
+  SINGLE = 'single',    // 单个检测
+  BATCH = 'batch',      // 批量检测
+  CUSTOM = 'custom',    // 自定义检测
 }
 
-// AI Provider 配置信息
+// 服务商配置接口
 export interface ProviderConfig {
   name: string;
   keyFormat: RegExp;
@@ -245,7 +263,7 @@ export interface ProviderConfig {
   };
 }
 
-// 通用UI组件Props
+// 按钮Props
 export interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
@@ -257,6 +275,7 @@ export interface ButtonProps {
   icon?: React.ReactNode;
 }
 
+// 输入框Props
 export interface InputProps {
   type?: string;
   placeholder?: string;
@@ -272,6 +291,7 @@ export interface InputProps {
   rows?: number;
 }
 
+// 选择器Props
 export interface SelectProps {
   options: SelectOption[];
   value: string;
@@ -282,6 +302,7 @@ export interface SelectProps {
   searchable?: boolean;
 }
 
+// 选择器选项
 export interface SelectOption {
   value: string;
   label: string;
@@ -289,19 +310,20 @@ export interface SelectOption {
   icon?: React.ReactNode;
 }
 
-// 动画相关类型
+// 动画变体
 export interface AnimationVariants {
   hidden: any;
   visible: any;
 }
 
+// 交错动画Props
 export interface StaggerAnimationProps {
   children: React.ReactNode;
   delay?: number;
   duration?: number;
 }
 
-// Hook 返回类型
+// 密钥检测Hook返回值
 export interface UseKeyDetectionReturn {
   isDetecting: boolean;
   results: BatchKeyItem[];
@@ -316,6 +338,7 @@ export interface UseKeyDetectionReturn {
   updateResult: (id: string, result: ApiKeyValidationResult) => void;
 }
 
+// 模板Hook返回值
 export interface UseTemplatesReturn {
   templates: Template[];
   isLoading: boolean;
@@ -340,13 +363,14 @@ export interface UseTemplatesReturn {
   importFromFile: (file: File) => Promise<void>;
 }
 
+// 暗色模式Hook返回值
 export interface UseDarkModeReturn {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
   setDarkMode: (enabled: boolean) => void;
 }
 
-// 响应式断点类型
+// 断点配置
 export interface Breakpoints {
   mobile: number;
   tablet: number;
@@ -354,13 +378,14 @@ export interface Breakpoints {
   wide: number;
 }
 
-// 错误类型
+// 验证错误
 export interface ValidationError {
   field: string;
   message: string;
   code: string;
 }
 
+// 应用错误
 export interface AppError {
   message: string;
   code: string;
@@ -368,7 +393,7 @@ export interface AppError {
   timestamp: Date;
 }
 
-// 主题相关类型
+// 主题颜色
 export interface ThemeColors {
   primary: string;
   secondary: string;
@@ -383,6 +408,7 @@ export interface ThemeColors {
   border: string;
 }
 
+// 主题配置
 export interface Theme {
   colors: ThemeColors;
   typography: {

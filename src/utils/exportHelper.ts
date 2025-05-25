@@ -7,11 +7,14 @@ import {
 
 /**
  * 导出辅助工具类
+ * 提供数据导出、格式转换和文件下载功能
  */
 export class ExportHelper {
 
   /**
    * 导出结果为JSON格式
+   * @param data - 要导出的数据
+   * @param config - 导出配置
    */
   static exportAsJSON(data: BatchKeyItem[], config: ExportConfig): void {
     const filteredData = this.filterData(data, config);
@@ -25,6 +28,8 @@ export class ExportHelper {
 
   /**
    * 导出结果为CSV格式
+   * @param data - 要导出的数据
+   * @param config - 导出配置
    */
   static exportAsCSV(data: BatchKeyItem[], config: ExportConfig): void {
     const filteredData = this.filterData(data, config);
@@ -42,6 +47,9 @@ export class ExportHelper {
 
   /**
    * 根据配置过滤数据
+   * @param data - 原始数据
+   * @param config - 导出配置
+   * @returns 过滤后的数据
    */
   private static filterData(data: BatchKeyItem[], config: ExportConfig): BatchKeyItem[] {
     let filteredData = [...data];
@@ -63,6 +71,9 @@ export class ExportHelper {
 
   /**
    * 选择要导出的字段
+   * @param data - 原始数据
+   * @param fields - 要导出的字段列表
+   * @returns 处理后的数据
    */
   private static selectFields(data: BatchKeyItem[], fields: string[]): any[] {
     return data.map(item => {
@@ -129,6 +140,9 @@ export class ExportHelper {
 
   /**
    * 生成CSV内容
+   * @param data - 要导出的数据
+   * @param fields - 要导出的字段列表
+   * @returns CSV格式的字符串
    */
   private static generateCSV(data: BatchKeyItem[], fields: string[]): string {
     if (data.length === 0) {
@@ -160,6 +174,8 @@ export class ExportHelper {
 
   /**
    * 获取CSV表头
+   * @param fields - 要导出的字段列表
+   * @returns CSV表头字符串
    */
   private static getCSVHeaders(fields: string[]): string {
     const headerMap: Record<string, string> = {
@@ -186,6 +202,8 @@ export class ExportHelper {
 
   /**
    * 获取字段对应的数据键
+   * @param field - 字段名
+   * @returns 数据键名
    */
   private static getFieldKey(field: string): string {
     const keyMap: Record<string, string> = {
@@ -198,7 +216,9 @@ export class ExportHelper {
   }
 
   /**
-   * 掩码API Key（只显示前4位和后4位）
+   * 掩码处理API密钥
+   * @param key - 原始密钥
+   * @returns 掩码后的密钥
    */
   private static maskKey(key: string): string {
     if (key.length <= 8) {
@@ -208,7 +228,9 @@ export class ExportHelper {
   }
 
   /**
-   * 获取状态的中文描述
+   * 获取状态文本描述
+   * @param status - 状态枚举值
+   * @returns 状态描述文本
    */
   private static getStatusText(status: KeyStatus): string {
     const statusTextMap: Record<KeyStatus, string> = {
@@ -229,6 +251,9 @@ export class ExportHelper {
 
   /**
    * 下载文件
+   * @param content - 文件内容
+   * @param filename - 文件名
+   * @param mimeType - MIME类型
    */
   private static downloadFile(content: string, filename: string, mimeType: string): void {
     try {
@@ -253,7 +278,8 @@ export class ExportHelper {
   }
 
   /**
-   * 格式化日期用于文件名
+   * 格式化日期
+   * @returns 格式化的日期字符串
    */
   private static formatDate(): string {
     const now = new Date();
@@ -262,6 +288,7 @@ export class ExportHelper {
 
   /**
    * 获取默认导出字段
+   * @returns 默认字段列表
    */
   static getDefaultExportFields(): string[] {
     return [
@@ -275,7 +302,8 @@ export class ExportHelper {
   }
 
   /**
-   * 获取所有可用导出字段
+   * 获取所有可导出字段
+   * @returns 字段配置列表
    */
   static getAllExportFields(): { value: string; label: string; description?: string }[] {
     return [
@@ -300,6 +328,8 @@ export class ExportHelper {
 
   /**
    * 验证导出配置
+   * @param config - 导出配置
+   * @returns 验证结果
    */
   static validateExportConfig(config: ExportConfig): {
     isValid: boolean;
@@ -333,6 +363,10 @@ export class ExportHelper {
 
   /**
    * 预览导出数据
+   * @param data - 要导出的数据
+   * @param config - 导出配置
+   * @param limit - 预览数量限制
+   * @returns 预览数据
    */
   static previewExport(data: BatchKeyItem[], config: ExportConfig, limit: number = 5): {
     previewData: any[];
@@ -350,7 +384,10 @@ export class ExportHelper {
   }
 
   /**
-   * 计算导出文件大小（估算）
+   * 估算文件大小
+   * @param data - 要导出的数据
+   * @param config - 导出配置
+   * @returns 文件大小信息
    */
   static estimateFileSize(data: BatchKeyItem[], config: ExportConfig): {
     size: number;
@@ -380,6 +417,8 @@ export class ExportHelper {
 
   /**
    * 格式化文件大小
+   * @param bytes - 字节数
+   * @returns 格式化后的大小字符串
    */
   private static formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 B';
@@ -392,7 +431,10 @@ export class ExportHelper {
   }
 
   /**
-   * 批量导出（支持大数据量）
+   * 导出大量数据
+   * @param data - 要导出的数据
+   * @param config - 导出配置
+   * @param onProgress - 进度回调函数
    */
   static async exportLargeData(
     data: BatchKeyItem[], 

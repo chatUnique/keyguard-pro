@@ -8,12 +8,15 @@ import {
 
 /**
  * 自定义URL测试器类
+ * 提供自定义API请求测试和模板管理功能
  */
 export class CustomTester {
   private static readonly STORAGE_KEY = 'ai-key-checker-templates';
 
   /**
    * 执行自定义请求
+   * @param request - 自定义请求配置
+   * @returns 请求响应结果
    */
   static async executeRequest(request: CustomRequest): Promise<CustomResponse> {
     const startTime = Date.now();
@@ -104,6 +107,9 @@ export class CustomTester {
   /**
    * 替换字符串中的变量
    * 支持格式：{VARIABLE_NAME}
+   * @param template - 包含变量的模板字符串
+   * @param variables - 变量映射对象
+   * @returns 替换变量后的字符串
    */
   static replaceVariables(template: string, variables: Record<string, string>): string {
     let result = template;
@@ -129,6 +135,7 @@ export class CustomTester {
 
   /**
    * 生成UUID (备用方法)
+   * @returns 生成的UUID字符串
    */
   private static generateUUID(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -140,6 +147,8 @@ export class CustomTester {
 
   /**
    * 保存模板到LocalStorage
+   * @param template - 要保存的模板
+   * @returns 保存后的完整模板对象
    */
   static saveTemplate(template: Omit<Template, 'id' | 'createdAt' | 'updatedAt'>): Template {
     const templates = this.getTemplates();
@@ -159,6 +168,9 @@ export class CustomTester {
 
   /**
    * 更新模板
+   * @param id - 模板ID
+   * @param updates - 要更新的字段
+   * @returns 更新后的模板对象，如果模板不存在则返回null
    */
   static updateTemplate(id: string, updates: Partial<Template>): Template | null {
     const templates = this.getTemplates();
@@ -178,6 +190,8 @@ export class CustomTester {
 
   /**
    * 删除模板
+   * @param id - 要删除的模板ID
+   * @returns 是否成功删除
    */
   static deleteTemplate(id: string): boolean {
     const templates = this.getTemplates();
@@ -193,6 +207,7 @@ export class CustomTester {
 
   /**
    * 获取所有模板
+   * @returns 模板列表
    */
   static getTemplates(): Template[] {
     try {
@@ -223,14 +238,18 @@ export class CustomTester {
   }
 
   /**
-   * 根据分类获取模板
+   * 按类别获取模板
+   * @param category - 模板类别
+   * @returns 指定类别的模板列表
    */
   static getTemplatesByCategory(category: TemplateCategory): Template[] {
     return this.getTemplates().filter(template => template.category === category);
   }
 
   /**
-   * 获取模板
+   * 获取指定模板
+   * @param id - 模板ID
+   * @returns 模板对象，如果不存在则返回null
    */
   static getTemplate(id: string): Template | null {
     const templates = this.getTemplates();
@@ -239,6 +258,7 @@ export class CustomTester {
 
   /**
    * 导入模板
+   * @param importedTemplates - 要导入的模板列表
    */
   static importTemplates(importedTemplates: Template[]): void {
     const existingTemplates = this.getTemplates();
@@ -252,6 +272,7 @@ export class CustomTester {
 
   /**
    * 导出模板
+   * @returns 所有模板列表
    */
   static exportTemplates(): Template[] {
     return this.getTemplates().filter(template => !template.id.startsWith('default-'));
@@ -259,6 +280,7 @@ export class CustomTester {
 
   /**
    * 保存模板到存储
+   * @param templates - 要保存的模板列表
    */
   private static saveTemplatesToStorage(templates: Template[]): void {
     try {
@@ -270,6 +292,7 @@ export class CustomTester {
 
   /**
    * 获取默认模板
+   * @returns 默认模板列表
    */
   private static getDefaultTemplates(): Template[] {
     const now = new Date();
@@ -388,6 +411,8 @@ export class CustomTester {
 
   /**
    * 验证请求配置
+   * @param request - 要验证的请求配置
+   * @returns 验证结果
    */
   static validateRequest(request: CustomRequest): {
     isValid: boolean;
@@ -444,6 +469,9 @@ export class CustomTester {
 
   /**
    * 格式化响应体
+   * @param body - 响应体数据
+   * @param contentType - 内容类型
+   * @returns 格式化后的字符串
    */
   static formatResponseBody(body: any, contentType?: string): string {
     if (body === null || body === undefined) {
@@ -468,7 +496,9 @@ export class CustomTester {
   }
 
   /**
-   * 获取状态码的描述
+   * 获取状态码描述
+   * @param status - HTTP状态码
+   * @returns 状态码描述文本
    */
   static getStatusDescription(status: number): string {
     const statusMap: Record<number, string> = {
