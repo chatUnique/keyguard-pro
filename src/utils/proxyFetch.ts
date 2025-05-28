@@ -291,6 +291,25 @@ export class AIProxyClient {
   }
 
   /**
+   * xAI API请求
+   * @param endpoint - API端点
+   * @param apiKey - API密钥
+   * @param data - 请求数据
+   * @returns 请求响应
+   */
+  async xai(endpoint: string, apiKey: string, data?: any): Promise<ProxyResponse> {
+    return this.request({
+      url: `https://api.x.ai${endpoint}`,
+      method: data ? 'POST' : 'GET',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      data,
+    });
+  }
+
+  /**
    * 测试网络连接性
    * @param forceRefresh - 是否强制刷新
    * @returns 网络状态信息

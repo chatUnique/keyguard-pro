@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       'api.fireworks.ai',
       'api.groq.com',
       'api.perplexity.ai',
+      'api.x.ai',
       'api.mistral.ai',
       'api.deepseek.com',
       'api.lingyi.ai',

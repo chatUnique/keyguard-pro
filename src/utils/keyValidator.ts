@@ -10,12 +10,17 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'OpenAI',
     keyFormat: /^sk-[a-zA-Z0-9]{48}$/,
     keyExample: 'sk-abc123def456ghi789...',
-    supportedFormats: [RequestFormat.NATIVE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
       [RequestFormat.NATIVE]: 'https://api.openai.com/v1/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.openai.com/v1/chat/completions',
     },
     headers: {
       [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
+      [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
       },
@@ -53,11 +58,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Azure OpenAI',
     keyFormat: /^[a-zA-Z0-9]{32}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: '{endpoint}/openai/deployments/{deployment}/models?api-version=2023-05-15',
       [RequestFormat.OPENAI_COMPATIBLE]: '{endpoint}/openai/deployments/{deployment}/chat/completions?api-version=2023-05-15',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'api-key': '{key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'api-key': '{key}',
         'Content-Type': 'application/json',
@@ -88,13 +98,18 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Hugging Face',
     keyFormat: /^hf_[a-zA-Z0-9]{34,}$/,
     keyExample: 'hf_abc123def456...',
-    supportedFormats: [RequestFormat.NATIVE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
       [RequestFormat.NATIVE]: 'https://huggingface.co/api/whoami',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api-inference.huggingface.co/models/{model}',
     },
     headers: {
       [RequestFormat.NATIVE]: {
         'Authorization': 'Bearer {key}',
+      },
+      [RequestFormat.OPENAI_COMPATIBLE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
       },
     },
   },
@@ -159,11 +174,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Moonshot AI (Kimi)',
     keyFormat: /^sk-[a-zA-Z0-9]{48}$/,
     keyExample: 'sk-abc123def456...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
-      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.moonshot.cn/v1/models',
+      [RequestFormat.NATIVE]: 'https://api.moonshot.cn/v1/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.moonshot.cn/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -269,12 +289,17 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Replicate',
     keyFormat: /^r8_[a-zA-Z0-9]{32,}$/,
     keyExample: 'r8_1234567890abcdef...',
-    supportedFormats: [RequestFormat.NATIVE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
       [RequestFormat.NATIVE]: 'https://api.replicate.com/v1/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.replicate.com/v1/predictions',
     },
     headers: {
       [RequestFormat.NATIVE]: {
+        'Authorization': 'Token {key}',
+        'Content-Type': 'application/json',
+      },
+      [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Token {key}',
         'Content-Type': 'application/json',
       },
@@ -284,11 +309,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Together AI',
     keyFormat: /^[a-zA-Z0-9]{32,}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://api.together.xyz/v1/models',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.together.xyz/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -299,11 +329,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Fireworks AI',
     keyFormat: /^fw_[a-zA-Z0-9]{32,}$/,
     keyExample: 'fw_1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://api.fireworks.ai/inference/v1/models',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.fireworks.ai/inference/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -314,11 +349,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Groq',
     keyFormat: /^gsk_[a-zA-Z0-9]{32,}$/,
     keyExample: 'gsk_1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://api.groq.com/openai/v1/models',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.groq.com/openai/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -329,11 +369,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Perplexity',
     keyFormat: /^pplx-[a-zA-Z0-9]{32,}$/,
     keyExample: 'pplx-1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://api.perplexity.ai/models',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.perplexity.ai/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -342,13 +387,18 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
   },
   [AiProvider.XAI]: {
     name: 'xAI (Grok)',
-    keyFormat: /^xai-[a-zA-Z0-9]{32,}$/,
+    keyFormat: /^xai-[a-zA-Z0-9\-_]{32,}$/,
     keyExample: 'xai-1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
-      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.x.ai/v1/chat/completions',
+      [RequestFormat.NATIVE]: 'https://api.x.ai/v1/chat/completions',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.x.ai/v1/models',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -359,11 +409,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Mistral AI',
     keyFormat: /^[a-zA-Z0-9]{32,}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://api.mistral.ai/v1/models',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.mistral.ai/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -404,11 +459,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'Ollama',
     keyFormat: /^[a-zA-Z0-9\-_]{0,}$/,
     keyExample: 'ollama-1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
-      [RequestFormat.OPENAI_COMPATIBLE]: 'http://localhost:11434/api/tags',
+      [RequestFormat.NATIVE]: 'http://localhost:11434/api/tags',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'http://localhost:11434/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -464,11 +524,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: 'DeepSeek',
     keyFormat: /^sk-[a-zA-Z0-9]{32,}$/,
     keyExample: 'sk-1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://api.deepseek.com/v1/models',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.deepseek.com/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -479,11 +544,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: '零一万物 (01.AI)',
     keyFormat: /^[a-zA-Z0-9]{32,}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://api.01.ai/v1/models',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.01.ai/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -539,12 +609,17 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: '字节云雀',
     keyFormat: /^[a-zA-Z0-9]{32,}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.NATIVE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
       [RequestFormat.NATIVE]: 'https://ark.cn-beijing.volces.com/api/v3/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
     },
     headers: {
       [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
+      [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
       },
@@ -554,12 +629,17 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: '零一万物',
     keyFormat: /^[a-zA-Z0-9]{32,}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.NATIVE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
-      [RequestFormat.NATIVE]: 'https://api.lingyiwanwu.com/v1/chat/completions',
+      [RequestFormat.NATIVE]: 'https://api.lingyiwanwu.com/v1/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.lingyiwanwu.com/v1/chat/completions',
     },
     headers: {
       [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
+      [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
       },
@@ -569,12 +649,17 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: '百川智能',
     keyFormat: /^[a-zA-Z0-9]{32,}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.NATIVE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
-      [RequestFormat.NATIVE]: 'https://api.baichuan-ai.com/v1/chat/completions',
+      [RequestFormat.NATIVE]: 'https://api.baichuan-ai.com/v1/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.baichuan-ai.com/v1/chat/completions',
     },
     headers: {
       [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
+      [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
       },
@@ -584,12 +669,17 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: '昆仑万维',
     keyFormat: /^[a-zA-Z0-9]{32,}$/,
     keyExample: '1234567890abcdef...',
-    supportedFormats: [RequestFormat.NATIVE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
-      [RequestFormat.NATIVE]: 'https://api.kunlun.com/v1/chat/completions',
+      [RequestFormat.NATIVE]: 'https://api.kunlun.com/v1/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.kunlun.com/v1/chat/completions',
     },
     headers: {
       [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
+      [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
       },
@@ -599,11 +689,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: '阿里云百炼',
     keyFormat: /^sk-[a-zA-Z0-9]{32,}$/,
     keyExample: 'sk-1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
+      [RequestFormat.NATIVE]: 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation',
       [RequestFormat.OPENAI_COMPATIBLE]: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -674,11 +769,16 @@ const PROVIDER_CONFIGS: Record<AiProvider, ProviderConfig> = {
     name: '硅基流动',
     keyFormat: /^sk-[a-zA-Z0-9]{48,}$/,
     keyExample: 'sk-1234567890abcdef...',
-    supportedFormats: [RequestFormat.OPENAI_COMPATIBLE],
+    supportedFormats: [RequestFormat.NATIVE, RequestFormat.OPENAI_COMPATIBLE],
     endpoints: {
-      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.siliconflow.cn/v1/models',
+      [RequestFormat.NATIVE]: 'https://api.siliconflow.cn/v1/models',
+      [RequestFormat.OPENAI_COMPATIBLE]: 'https://api.siliconflow.cn/v1/chat/completions',
     },
     headers: {
+      [RequestFormat.NATIVE]: {
+        'Authorization': 'Bearer {key}',
+        'Content-Type': 'application/json',
+      },
       [RequestFormat.OPENAI_COMPATIBLE]: {
         'Authorization': 'Bearer {key}',
         'Content-Type': 'application/json',
@@ -860,7 +960,7 @@ export class AIKeyValidator {
       case AiProvider.PERPLEXITY:
         return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.XAI:
-        return this.validateGeneric(keyToValidate, provider, format, checkBalance);
+        return this.validateXAI(keyToValidate, format, checkBalance);
       case AiProvider.MISTRAL:
         return this.validateGeneric(keyToValidate, provider, format, checkBalance);
       case AiProvider.STABILITY:
@@ -1698,6 +1798,152 @@ export class AIKeyValidator {
       return {
         isValid: false,
         provider: AiProvider.SILICONFLOW,
+        requestFormat: format,
+        status: KeyStatus.UNKNOWN,
+        message: '验证过程中出现错误',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  private static async validateXAI(apiKey: string, format: RequestFormat, checkBalance: boolean): Promise<ApiKeyValidationResult> {
+    try {
+      // 使用智能代理客户端，根据网络状态选择连接方式
+      const proxyClient = createSmartProxyClient();
+      
+      let response;
+      let models: string[] = [];
+
+      if (format === RequestFormat.NATIVE) {
+        // 原生格式：使用聊天接口进行测试
+        response = await proxyClient.xai('/v1/chat/completions', apiKey, {
+          model: 'grok-3',
+          messages: [{ role: 'user', content: 'Hello' }],
+          max_tokens: 1,
+        });
+
+        if (response.status === 401 || response.status === 403) {
+          return {
+            isValid: false,
+            provider: AiProvider.XAI,
+            requestFormat: format,
+            status: KeyStatus.INVALID,
+            message: '无效的API Key',
+            error: 'API Key authentication failed',
+          };
+        }
+
+        if (response.status === 429) {
+          return {
+            isValid: false,
+            provider: AiProvider.XAI,
+            requestFormat: format,
+            status: KeyStatus.RATE_LIMITED,
+            message: 'API Key已达到速率限制',
+            error: 'Rate limit exceeded',
+          };
+        }
+
+        // 对于原生格式，如果聊天接口正常工作（包括400错误，表示请求格式问题但API Key有效）
+        if (response.ok || response.status === 400) {
+          models = ['grok-3', 'grok-3-mini', 'grok-3-fast', 'grok-3-mini-fast', 'grok-2-1212', 'grok-2-vision-1212'];
+        } else {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+      } else {
+        // OpenAI兼容格式：使用模型列表接口
+        response = await proxyClient.xai('/v1/models', apiKey);
+
+        if (response.status === 401 || response.status === 403) {
+          return {
+            isValid: false,
+            provider: AiProvider.XAI,
+            requestFormat: format,
+            status: KeyStatus.INVALID,
+            message: '无效的API Key',
+            error: 'API Key authentication failed',
+          };
+        }
+
+        if (response.status === 429) {
+          return {
+            isValid: false,
+            provider: AiProvider.XAI,
+            requestFormat: format,
+            status: KeyStatus.RATE_LIMITED,
+            message: 'API Key已达到速率限制',
+            error: 'Rate limit exceeded',
+          };
+        }
+
+        if (!response.ok) {
+          // 如果模型列表接口失败，尝试聊天接口测试
+          try {
+            const chatResponse = await proxyClient.xai('/v1/chat/completions', apiKey, {
+              model: 'grok-3',
+              messages: [{ role: 'user', content: 'test' }],
+              max_tokens: 1,
+            });
+
+            if (chatResponse.status === 401 || chatResponse.status === 403) {
+              return {
+                isValid: false,
+                provider: AiProvider.XAI,
+                requestFormat: format,
+                status: KeyStatus.INVALID,
+                message: '无效的API Key',
+                error: 'API Key authentication failed',
+              };
+            }
+
+            if (chatResponse.ok || chatResponse.status === 400) {
+              models = ['grok-3', 'grok-3-mini', 'grok-2-1212', 'grok-2-vision-1212'];
+            } else {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+          } catch (chatError) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+        } else {
+          // 解析模型列表响应
+          const data = response.data;
+          models = data?.data?.map((model: any) => model.id) || 
+                   data?.models?.map((model: any) => model.name || model.id) ||
+                   ['grok-3', 'grok-3-mini', 'grok-2-1212', 'grok-2-vision-1212'];
+        }
+      }
+
+      // 如果启用余额查询，可以在这里添加余额查询逻辑
+      let balance: number | undefined = undefined;
+      if (checkBalance) {
+        try {
+          // xAI可能还没有余额查询API，这里为未来预留
+          // const balanceResponse = await proxyClient.xai('/v1/billing/credit', apiKey);
+          // if (balanceResponse.ok) {
+          //   const balanceData = balanceResponse.data;
+          //   balance = balanceData?.credit_balance;
+          // }
+        } catch (e) {
+          // 忽略余额查询失败
+          console.warn('Failed to fetch xAI balance:', e);
+        }
+      }
+
+      return {
+        isValid: true,
+        provider: AiProvider.XAI,
+        requestFormat: format,
+        status: KeyStatus.VALID,
+        message: 'API Key验证成功',
+        details: {
+          models,
+          balance,
+        },
+      };
+    } catch (error) {
+      return {
+        isValid: false,
+        provider: AiProvider.XAI,
         requestFormat: format,
         status: KeyStatus.UNKNOWN,
         message: '验证过程中出现错误',

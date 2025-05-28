@@ -222,8 +222,8 @@ export const SingleKeyDetector: React.FC<SingleKeyDetectorProps> = ({ onResult }
       description: 'Elon Musk的AI助手',
       icon: <ProviderIcon provider={AiProvider.XAI} size={16} />,
       placeholder: 'xai-...',
-      example: 'xai-1234567890abcdef...',
-      defaultModels: ['grok-beta', 'grok-vision-beta']
+      example: 'xai-1234567890abcdef1234567890abcdef',
+      defaultModels: ['grok-3', 'grok-3-mini', 'grok-2-1212', 'grok-2-vision-1212']
     },
     { 
       value: AiProvider.MISTRAL, 

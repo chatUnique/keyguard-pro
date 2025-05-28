@@ -15,7 +15,10 @@ import {
   FileText,
   Globe,
   Key,
-  MoreVertical
+  MoreVertical,
+  Upload,
+  Sparkles,
+  Zap
 } from 'lucide-react';
 import { 
   CustomUrlTesterProps, 
@@ -23,10 +26,12 @@ import {
   CustomResponse, 
   HttpMethod, 
   Template, 
-  TemplateCategory 
+  TemplateCategory,
+  AiProvider
 } from '@/types';
 import Select from './ui/Select';
 import { useTemplates } from '@/hooks/useTemplates';
+import { ProviderIcon } from './ProviderIcon';
 
 /**
  * 自定义URL测试组件
@@ -74,6 +79,8 @@ export const CustomUrlTester: React.FC<CustomUrlTesterProps> = ({ onResult }) =>
       id: 'google-ai-models',
       name: 'Google AI - 获取模型列表',
       description: 'Google AI API 模型列表查询',
+      provider: AiProvider.GOOGLE,
+      category: 'models',
       request: {
         url: 'https://generativelanguage.googleapis.com/v1/models?key={{API_KEY}}',
         method: HttpMethod.GET,
@@ -87,6 +94,8 @@ export const CustomUrlTester: React.FC<CustomUrlTesterProps> = ({ onResult }) =>
       id: 'google-ai-chat',
       name: 'Google AI - 对话测试',
       description: 'Google AI API 对话接口测试',
+      provider: AiProvider.GOOGLE,
+      category: 'chat',
       request: {
         url: 'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={{API_KEY}}',
         method: HttpMethod.POST,
@@ -100,6 +109,8 @@ export const CustomUrlTester: React.FC<CustomUrlTesterProps> = ({ onResult }) =>
       id: 'openai-models',
       name: 'OpenAI - 获取模型列表',
       description: 'OpenAI API 模型列表查询',
+      provider: AiProvider.OPENAI,
+      category: 'models',
       request: {
         url: 'https://api.openai.com/v1/models',
         method: HttpMethod.GET,
@@ -113,6 +124,8 @@ export const CustomUrlTester: React.FC<CustomUrlTesterProps> = ({ onResult }) =>
       id: 'anthropic-messages',
       name: 'Anthropic - 消息测试',
       description: 'Anthropic Claude API 消息接口测试',
+      provider: AiProvider.ANTHROPIC,
+      category: 'chat',
       request: {
         url: 'https://api.anthropic.com/v1/messages',
         method: HttpMethod.POST,
@@ -128,22 +141,90 @@ export const CustomUrlTester: React.FC<CustomUrlTesterProps> = ({ onResult }) =>
     }
   ];
 
+  // 获取模板图标和样式
+  const getTemplateIcon = (templateId: string) => {
+    if (templateId.includes('google-ai')) {
+      return <ProviderIcon provider={AiProvider.GOOGLE} size={16} />;
+    } else if (templateId.includes('openai')) {
+      return <ProviderIcon provider={AiProvider.OPENAI} size={16} />;
+    } else if (templateId.includes('anthropic')) {
+      return <ProviderIcon provider={AiProvider.ANTHROPIC} size={16} />;
+    } else if (templateId.includes('models')) {
+      return <Globe className="w-4 h-4 text-blue-500" />;
+    } else if (templateId.includes('chat')) {
+      return <Sparkles className="w-4 h-4 text-purple-500" />;
+    }
+    return <FileText className="w-4 h-4" />;
+  };
+
+  // 获取模板前缀
+  const getTemplatePrefix = (templateId: string) => {
+    if (templateId.includes('google-ai')) {
+      return '🟦'; // Google 蓝色
+    } else if (templateId.includes('openai')) {
+      return '⚫'; // OpenAI 黑色
+    } else if (templateId.includes('anthropic')) {
+      return '🟤'; // Anthropic 橙色
+    }
+    return '📋'; // 默认
+  };
+
   // 模板选项（包含预设模板和用户自定义模板）
   const templateOptions = [
-    { value: '', label: '选择模板...', icon: <FileText className="w-4 h-4" /> },
+    { 
+      value: '', 
+      label: '选择模板...', 
+      icon: <FileText className="w-4 h-4 text-gray-400" />,
+      description: '选择一个预设或自定义模板'
+    },
     // 预设模板
-    ...presetTemplates.map(template => ({
-      value: `preset:${template.id}`,
-      label: `📋 ${template.name}`,
-      description: template.description,
-      icon: <FileText className="w-4 h-4" />
-    })),
+    ...presetTemplates.map(template => {
+      let icon = <FileText className="w-4 h-4" />;
+      
+      // 根据服务商和功能类型设置图标
+      if (template.id === 'google-ai-models') {
+        icon = (
+          <div className="flex items-center space-x-1">
+            <ProviderIcon provider={AiProvider.GOOGLE} size={14} />
+            <Globe className="w-3 h-3 text-blue-500" />
+          </div>
+        );
+      } else if (template.id === 'google-ai-chat') {
+        icon = (
+          <div className="flex items-center space-x-1">
+            <ProviderIcon provider={AiProvider.GOOGLE} size={14} />
+            <Sparkles className="w-3 h-3 text-purple-500" />
+          </div>
+        );
+      } else if (template.id === 'openai-models') {
+        icon = (
+          <div className="flex items-center space-x-1">
+            <ProviderIcon provider={AiProvider.OPENAI} size={14} />
+            <Globe className="w-3 h-3 text-green-500" />
+          </div>
+        );
+      } else if (template.id === 'anthropic-messages') {
+        icon = (
+          <div className="flex items-center space-x-1">
+            <ProviderIcon provider={AiProvider.ANTHROPIC} size={14} />
+            <Zap className="w-3 h-3 text-orange-500" />
+          </div>
+        );
+      }
+
+      return {
+        value: `preset:${template.id}`,
+        label: template.name,
+        description: template.description,
+        icon
+      };
+    }),
     // 用户模板
     ...templates.map(template => ({
       value: template.id,
       label: `👤 ${template.name}`,
-      description: template.description,
-      icon: <FileText className="w-4 h-4" />
+      description: template.description || '用户自定义模板',
+      icon: <FileText className="w-4 h-4 text-indigo-500" />
     }))
   ];
 

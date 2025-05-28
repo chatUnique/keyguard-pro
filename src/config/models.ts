@@ -329,11 +329,60 @@ export const perplexityModels: ModelInfo[] = [
 // xAI模型
 export const xaiModels: ModelInfo[] = [
   {
+    id: 'grok-3',
+    name: 'Grok-3',
+    provider: 'xAI',
+    contextLength: 131072,
+    description: 'xAI最新的Grok-3模型，具有强大的推理能力'
+  },
+  {
+    id: 'grok-3-mini',
+    name: 'Grok-3 Mini',
+    provider: 'xAI',
+    contextLength: 131072,
+    description: 'Grok-3的轻量版本，成本更低'
+  },
+  {
+    id: 'grok-3-fast',
+    name: 'Grok-3 Fast',
+    provider: 'xAI',
+    contextLength: 131072,
+    description: 'Grok-3的快速版本，响应更迅速'
+  },
+  {
+    id: 'grok-3-mini-fast',
+    name: 'Grok-3 Mini Fast',
+    provider: 'xAI',
+    contextLength: 131072,
+    description: 'Grok-3 Mini的快速版本'
+  },
+  {
+    id: 'grok-2-1212',
+    name: 'Grok-2-1212',
+    provider: 'xAI',
+    contextLength: 131072,
+    description: 'Grok-2的最新版本，性能优化'
+  },
+  {
+    id: 'grok-2-vision-1212',
+    name: 'Grok-2 Vision 1212',
+    provider: 'xAI',
+    contextLength: 131072,
+    description: 'Grok-2的多模态版本，支持图像理解'
+  },
+  {
     id: 'grok-beta',
     name: 'Grok Beta',
     provider: 'xAI',
+    contextLength: 131072,
+    description: 'xAI的Grok模型，具有实时信息访问能力'
+  },
+  {
+    id: 'grok-vision-beta',
+    name: 'Grok Vision Beta',
+    provider: 'xAI',
     contextLength: 8192,
-    description: 'xAI的Grok模型测试版'
+    description: 'xAI的多模态Grok模型，支持图像理解'
   }
 ];
 

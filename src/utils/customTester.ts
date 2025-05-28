@@ -307,7 +307,7 @@ export class CustomTester {
           url: 'https://api.openai.com/v1/models',
           method: HttpMethod.GET,
           headers: {
-            'Authorization': 'Bearer {API_KEY}',
+            'Authorization': 'Bearer {{API_KEY}}',
             'Content-Type': 'application/json',
           },
           timeout: 30000,
@@ -327,7 +327,7 @@ export class CustomTester {
           url: 'https://api.openai.com/v1/chat/completions',
           method: HttpMethod.POST,
           headers: {
-            'Authorization': 'Bearer {API_KEY}',
+            'Authorization': 'Bearer {{API_KEY}}',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -395,7 +395,7 @@ export class CustomTester {
           url: 'https://api.example.com/endpoint',
           method: HttpMethod.GET,
           headers: {
-            'Authorization': 'Bearer {API_KEY}',
+            'Authorization': 'Bearer {{API_KEY}}',
             'Content-Type': 'application/json',
           },
           timeout: 30000,
